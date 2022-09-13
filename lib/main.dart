@@ -102,8 +102,8 @@ class _MyHomePageState extends State<MyHomePage> {
             GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, '/game');
-                column = 10;
-                row = 10;
+                column = 8;
+                row = 8;
                 gameBoard = GameBoard(column, row);
               },
               child: SizedBox(
@@ -211,9 +211,13 @@ class BoardPiece {
     situationId = stoneId;
   }
 }
-class GameScreen extends StatelessWidget {
+class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
 
+  @override
+  GameScreenPage createState() => GameScreenPage();
+}
+class GameScreenPage extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -242,7 +246,7 @@ class GameScreen extends StatelessWidget {
               for (int i = 0; i < column; i++) ... {
                 TableRow(children: <Widget>[
                   for (int j = 0; j < row; j++) ... {
-                    board(gameBoard.array[i][j].situationId)
+                    board(i, j, gameBoard.array[i][j].situationId)
                   }
                 ])
               }
@@ -296,13 +300,32 @@ class GameScreen extends StatelessWidget {
       return Container();
     }
   }
-  AspectRatio board(int val) {
-    return AspectRatio(
-      aspectRatio: 1.0,
+  // AspectRatio board(int val) {
+  //   return AspectRatio(
+  //     aspectRatio: 1.0,
+  //     child: Container(
+  //       color: Colors.green,
+  //       child: stoneDecorate(val),
+  //     )
+  //   );
+  // }
+  GestureDetector board(int column, int row, int val) {
+    BoardPiece piece = gameBoard.array[column][row];
+    return GestureDetector(
+      onTap: () {
+        if (piece.canPlace) {
+          debugPrint("$column $row");
+          setState(() {
+            piece.putStone = 2;
+          });
+        }
+      },
       child: Container(
+        width: 40.0,
+        height: 40.0,
         color: Colors.green,
         child: stoneDecorate(val),
-      )
+      ),
     );
   }
 }
