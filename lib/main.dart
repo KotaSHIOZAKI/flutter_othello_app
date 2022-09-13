@@ -300,23 +300,15 @@ class GameScreenPage extends State<GameScreen> {
       return Container();
     }
   }
-  // AspectRatio board(int val) {
-  //   return AspectRatio(
-  //     aspectRatio: 1.0,
-  //     child: Container(
-  //       color: Colors.green,
-  //       child: stoneDecorate(val),
-  //     )
-  //   );
-  // }
   GestureDetector board(int column, int row, int val) {
     BoardPiece piece = gameBoard.array[column][row];
     return GestureDetector(
       onTap: () {
         if (piece.canPlace) {
-          debugPrint("$column $row");
+          int color = 1;
+          // putStone(column, row, color);
           setState(() {
-            piece.putStone = 2;
+            piece.putStone = color;
           });
         }
       },
@@ -327,6 +319,50 @@ class GameScreenPage extends State<GameScreen> {
         child: stoneDecorate(val),
       ),
     );
+  }
+
+  // Future<void> putStone(int column, int row, int color) async {
+  //   await Future.delayed(const Duration(seconds: 1));
+  //   var rowList = [];
+  //   for (int i = row; i < gameBoard.array[column].length; i++) {
+  //     rowList.add(i);
+  //     if (gameBoard.array[column][i].situationId == color) {
+  //       for (int val in rowList) {
+  //         setState(() {
+  //           gameBoard.array[column][val].putStone = color;
+  //         });
+  //       }
+  //       break;
+  //     }
+  //   }
+  // }
+  void putStone(int column, int row, int color) {
+    void replaceStone(int col, int row, int columnAdd, int rowAdd) {
+      int j = col;
+      bool same = false;
+      var colList = [];
+      var rowList = [];
+      for (int i = row; i < gameBoard.array[column].length; i+=rowAdd) {
+        colList.add(i);
+        rowList.add(i);
+        if (gameBoard.array[column+j][i].situationId == color) {
+          same = true;
+          break;
+        }
+        j += columnAdd;
+      }
+
+      if (same) {
+        for (int i = 0; i < colList.length; i++) {
+          setState(() {
+            gameBoard.array[colList[i]][rowList[i]].putStone = color;
+          });
+        }
+      }
+    }
+
+    replaceStone(column, row, 0, 1);
+    replaceStone(column, row, 0, -1);
   }
 }
 
