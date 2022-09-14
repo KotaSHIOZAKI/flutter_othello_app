@@ -193,11 +193,11 @@ class GameBoard {
     int colHalf = column ~/ 2;
     int rowHalf = row ~/ 2;
     //黒
-    array[colHalf-1][rowHalf-1] = BoardPiece(1);
-    array[colHalf][rowHalf] = BoardPiece(1);
+    array[colHalf-1][rowHalf-1] = BoardPiece(2);
+    array[colHalf][rowHalf] = BoardPiece(2);
     //白
-    array[colHalf][rowHalf-1] = BoardPiece(2);
-    array[colHalf-1][rowHalf] = BoardPiece(2);
+    array[colHalf][rowHalf-1] = BoardPiece(1);
+    array[colHalf-1][rowHalf] = BoardPiece(1);
   }
 }
 class BoardPiece {
@@ -300,16 +300,23 @@ class GameScreenPage extends State<GameScreen> {
       return Container();
     }
   }
+  int colorToggle = 1;
   GestureDetector board(int column, int row, int val) {
     BoardPiece piece = gameBoard.array[column][row];
     return GestureDetector(
       onTap: () {
         if (piece.canPlace) {
-          int color = 1;
-          // putStone(column, row, color);
+          int color = colorToggle;
+          putStone(column, row, color);
           setState(() {
             piece.putStone = color;
           });
+
+          if (colorToggle == 1) {
+            colorToggle = 2;
+          } else {
+            colorToggle = 1;
+          }
         }
       },
       child: Container(
@@ -342,27 +349,49 @@ class GameScreenPage extends State<GameScreen> {
       bool same = false;
       var colList = [];
       var rowList = [];
-      for (int i = row; i < gameBoard.array[column].length; i+=rowAdd) {
-        colList.add(i);
-        rowList.add(i);
-        if (gameBoard.array[column+j][i].situationId == color) {
-          same = true;
+      for (int i = row+rowAdd; i < gameBoard.array[column].length; i+=rowAdd) {
+        try {
+          j += columnAdd;
+          if (j < 0 || j >= gameBoard.array.length || i < 0) {
+            //範囲外の場合
+            break;
+          }
+
+          colList.add(j);
+          rowList.add(i);
+          if (gameBoard.array[j][i].situationId == color && gameBoard.array[j][i].situationId > 0) {
+            //相手の石を挟める場合
+            same = true;
+            break;
+          }
+          if (gameBoard.array[j][i].situationId == 0) {
+            break;
+          }
+        } catch (e) {
           break;
         }
-        j += columnAdd;
       }
 
       if (same) {
         for (int i = 0; i < colList.length; i++) {
-          setState(() {
-            gameBoard.array[colList[i]][rowList[i]].putStone = color;
-          });
+          var replacedStone = gameBoard.array[colList[i]][rowList[i]];
+          if (replacedStone.situationId > 0) {
+            setState(() {
+              replacedStone.putStone = color;
+            });
+          }
         }
       }
     }
 
     replaceStone(column, row, 0, 1);
     replaceStone(column, row, 0, -1);
+    replaceStone(column, row, -1, 0);
+    replaceStone(column, row, 1, 0);
+    replaceStone(column, row, 1, 1);
+    replaceStone(column, row, -1, -1);
+    replaceStone(column, row, -1, 1);
+    replaceStone(column, row, 1, -1);
   }
 }
 
