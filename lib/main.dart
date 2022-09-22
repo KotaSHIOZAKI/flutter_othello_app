@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'dart:math';
 import 'package:bordered_text/bordered_text.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,6 +38,15 @@ class MyApp extends StatelessWidget {
         '/game': (context) => const GameScreen(),
         '/c_page': (context) => const CPage(),
       },
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ja'),
+      ],
     );
   }
 }
@@ -256,7 +266,7 @@ class GameScreenPage extends State<GameScreen> {
             strokeWidth: 3.0, //縁の太さ
             strokeColor: Colors.black,
             child: const Text(
-              "あなたの番です。\nすきな場所にタップしてください。",
+              "あなたの番です。\n赤枠の場所にタップしてください。",
               textAlign: TextAlign.center,
               overflow: TextOverflow.visible,
               style: TextStyle(
@@ -343,8 +353,8 @@ class GameScreenPage extends State<GameScreen> {
   //     }
   //   }
   // }
-  void putStone(int column, int row, int color) {
-    void replaceStone(int col, int row, int columnAdd, int rowAdd) {
+  dynamic putStone(int column, int row, int color, {bool replace = true}) {
+    int replaceStone(int col, int row, int columnAdd, int rowAdd, bool replace) {
       int j = col;
       bool same = false;
       var colList = [];
@@ -381,17 +391,27 @@ class GameScreenPage extends State<GameScreen> {
             });
           }
         }
+        return 1;
+      } else {
+        return 0;
       }
     }
 
-    replaceStone(column, row, 0, 1);
-    replaceStone(column, row, 0, -1);
-    replaceStone(column, row, -1, 0);
-    replaceStone(column, row, 1, 0);
-    replaceStone(column, row, 1, 1);
-    replaceStone(column, row, -1, -1);
-    replaceStone(column, row, -1, 1);
-    replaceStone(column, row, 1, -1);
+    int total = 0;
+    total += replaceStone(column, row, 0, 1, replace);
+    total += replaceStone(column, row, 0, -1, replace);
+    total += replaceStone(column, row, -1, 0, replace);
+    total += replaceStone(column, row, 1, 0, replace);
+    total += replaceStone(column, row, 1, 1, replace);
+    total += replaceStone(column, row, -1, -1, replace);
+    total += replaceStone(column, row, -1, 1, replace);
+    total += replaceStone(column, row, 1, -1, replace);
+
+    if (!replace) {
+      return total > 0;
+    } else {
+      return;
+    }
   }
 }
 
