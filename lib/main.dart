@@ -10,6 +10,7 @@ void main() {
 int column = 6;
 int row = 6;
 GameBoard gameBoard = GameBoard(6, 6);
+var counts = [0, 0];
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -70,18 +71,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // int _counter = 0;
-
-  // void _incrementCounter() {
-  //   setState(() {
-  //     // This call to setState tells the Flutter framework that something has
-  //     // changed in this State, which causes it to rerun the build method below
-  //     // so that the display can reflect the updated values. If we changed
-  //     // _counter without calling setState(), then the build method would not be
-  //     // called again, and so nothing would appear to happen.
-  //     _counter++;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -93,43 +82,32 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 184, 132, 0),
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       body: Center(
-        child: Wrap(
+        child: Column(
           children: <Widget>[
-            GestureDetector(
-              onTap: () {
+            const Text(
+              "オセロ",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 64), 
+            ),
+            ElevatedButton(
+              onPressed: (){
                 Navigator.pushNamed(context, '/options');
               },
-              child: SizedBox(
-                width: 120,
-                height: 120,
-                child: Image.asset('images/imageA.png', fit: BoxFit.cover)
+              child: const Text(
+                "始める",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 25), 
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/game');
-                column = 8;
-                row = 8;
-                gameBoard = GameBoard(column, row);
-              },
-              child: SizedBox(
-                width: 120,
-                height: 120,
-                child: Image.asset('images/imageB.png', fit: BoxFit.cover)
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
+            ElevatedButton(
+              onPressed: (){
                 Navigator.pushNamed(context, '/c_page');
               },
-              child: SizedBox(
-                width: 120,
-                height: 120,
-                child: Image.asset('images/imageC.png', fit: BoxFit.cover)
+              child: const Text(
+                "ルール説明",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 25), 
               ),
             ),
           ],
@@ -176,9 +154,27 @@ class OptionsPage extends State<Options> {
             ),
             ElevatedButton(
               onPressed: (){
+                column = 8;
+                row = 8;
+                gameBoard = GameBoard(column, row);
+                stoneCounts();
+                Navigator.pushNamed(context, '/game');
+              },
+              child: const Text(
+                "始める",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 25), 
+              ),
+            ),
+            ElevatedButton(
+              onPressed: (){
                 Navigator.popUntil(context, ModalRoute.withName('/'));
               },
-              child: const Text("戻る"),
+              child: const Text(
+                "やめる",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 25), 
+              ),
             ),
           ]
         )
@@ -239,13 +235,47 @@ class GameScreenPage extends State<GameScreen> {
             child: Container(
               color: Colors.green,
               margin: const EdgeInsets.all(8.0),
-              child: const Text(
-                "あなた ● × 99\nCOM ○ × 99",
-                textAlign: TextAlign.left,
-                overflow: TextOverflow.visible,
-                style: TextStyle(
-                  fontSize: 22,
-                ),
+              child: Table(
+                columnWidths: const {
+                  0: FractionColumnWidth(.3), 
+                  1: FractionColumnWidth(.1), 
+                  2: FractionColumnWidth(.2)
+                },
+                children: <TableRow>[
+                  TableRow(children: <Widget>[
+                    const Text(
+                      "あなた",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 24), 
+                    ),
+                    const Icon(
+                      Icons.circle,
+                      size: 32,
+                    ),
+                    Text(
+                      "×${counts[0]}",
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(fontSize: 24), 
+                    ),
+                  ]),
+                  TableRow(children: <Widget>[
+                    const Text(
+                      "相手",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 24), 
+                    ),
+                    const Icon(
+                      Icons.circle,
+                      size: 32,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      "×${counts[1]}",
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(fontSize: 24), 
+                    ),
+                  ]),
+                ],
               ),
             ),
           ),
@@ -279,7 +309,11 @@ class GameScreenPage extends State<GameScreen> {
             onPressed: (){
               Navigator.popUntil(context, ModalRoute.withName('/'));
             },
-            child: const Text("やめる"),
+            child: const Text(
+              "やめる",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 25), 
+            ),
           ),
         ]
       )
@@ -320,6 +354,7 @@ class GameScreenPage extends State<GameScreen> {
           putStone(column, row, color);
           setState(() {
             piece.putStone = color;
+            stoneCounts();
           });
 
           if (colorToggle == 1) {
@@ -355,45 +390,29 @@ class GameScreenPage extends State<GameScreen> {
   // }
   dynamic putStone(int column, int row, int color, {bool replace = true}) {
     int replaceStone(int col, int row, int columnAdd, int rowAdd, bool replace) {
-      int j = col;
-      bool same = false;
-      var colList = [];
-      var rowList = [];
-      for (int i = row+rowAdd; i < gameBoard.array[column].length; i+=rowAdd) {
-        try {
-          j += columnAdd;
-          if (j < 0 || j >= gameBoard.array.length || i < 0) {
-            //範囲外の場合
-            break;
-          }
-
-          colList.add(j);
-          rowList.add(i);
-          if (gameBoard.array[j][i].situationId == color && gameBoard.array[j][i].situationId > 0) {
-            //相手の石を挟める場合
-            same = true;
-            break;
-          }
-          if (gameBoard.array[j][i].situationId == 0) {
-            break;
-          }
-        } catch (e) {
-          break;
-        }
+      col += columnAdd;
+      row += rowAdd;
+      if (
+        col < 0 || row < 0 || 
+        col >= gameBoard.array.length || row >= gameBoard.array[col].length
+      ) {
+        return 0;
       }
 
-      if (same) {
-        for (int i = 0; i < colList.length; i++) {
-          var replacedStone = gameBoard.array[colList[i]][rowList[i]];
-          if (replacedStone.situationId > 0) {
+      if (gameBoard.array[col][row].situationId == 0) {
+        return 0;
+      } else {
+        if (gameBoard.array[col][row].situationId == color) {
+          return 1;
+        } else {
+          int result = replaceStone(col, row, columnAdd, rowAdd, replace);
+          if (result == 1) {
             setState(() {
-              replacedStone.putStone = color;
+              gameBoard.array[col][row].putStone = color;
             });
           }
+          return result;
         }
-        return 1;
-      } else {
-        return 0;
       }
     }
 
@@ -408,9 +427,29 @@ class GameScreenPage extends State<GameScreen> {
     total += replaceStone(column, row, 1, -1, replace);
 
     if (!replace) {
+      if (total > 0) {
+        setState(() {
+          gameBoard.array[column][row].putStone = color;
+          stoneCounts();
+        });
+      }
       return total > 0;
     } else {
       return;
+    }
+  }
+}
+
+void stoneCounts() {
+  counts = [0, 0];
+
+  for (var row in gameBoard.array) {
+    for (var value in row) {
+      if (value.situationId == 1) {
+        counts[0]++;
+      } else if (value.situationId == 2) {
+        counts[1]++;
+      }
     }
   }
 }
