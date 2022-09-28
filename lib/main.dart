@@ -125,8 +125,9 @@ class Options extends StatefulWidget {
   @override
   OptionsPage createState() => OptionsPage();
 }
-int _gValue = 1;
 class OptionsPage extends State<Options> {
+  int _boardSize = 1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,26 +137,26 @@ class OptionsPage extends State<Options> {
           children: <Widget>[
             RadioListTile(
               title: const Text('６×６'),
-              value: 1,
-              groupValue: _gValue,
+              value: 0,
+              groupValue: _boardSize,
               onChanged: (value){_onRadioSelected(value);},
             ),
             RadioListTile(
               title: const Text('８×８'),
-              value: 2,
-              groupValue: _gValue,
+              value: 1,
+              groupValue: _boardSize,
               onChanged: (value){_onRadioSelected(value);},
             ),
             RadioListTile(
               title: const Text('１０×１０'),
-              value: 3,
-              groupValue: _gValue,
+              value: 2,
+              groupValue: _boardSize,
               onChanged: (value){_onRadioSelected(value);},
             ),
             ElevatedButton(
               onPressed: (){
-                column = 8;
-                row = 8;
+                column = (_boardSize * 2) + 6;
+                row = (_boardSize * 2) + 6;
                 gameBoard = GameBoard(column, row);
                 stoneCounts();
                 Navigator.pushNamed(context, '/game');
@@ -183,7 +184,7 @@ class OptionsPage extends State<Options> {
   }
   _onRadioSelected(value) {
     setState(() {
-      _gValue = value;
+      _boardSize = value;
     });
   }
 }
@@ -351,16 +352,18 @@ class GameScreenPage extends State<GameScreen> {
       onTap: () {
         if (piece.canPlace) {
           int color = colorToggle;
-          putStone(column, row, color);
-          setState(() {
-            piece.putStone = color;
-            stoneCounts();
-          });
+          bool put = putStone(column, row, color);
+          if (put) {
+            setState(() {
+              piece.putStone = color;
+              stoneCounts();
+            });
 
-          if (colorToggle == 1) {
-            colorToggle = 2;
-          } else {
-            colorToggle = 1;
+            if (colorToggle == 1) {
+              colorToggle = 2;
+            } else {
+              colorToggle = 1;
+            }
           }
         }
       },
@@ -388,7 +391,7 @@ class GameScreenPage extends State<GameScreen> {
   //     }
   //   }
   // }
-  dynamic putStone(int column, int row, int color, {bool replace = true}) {
+  bool putStone(int column, int row, int color, {bool replace = true}) {
     int replaceStone(int col, int row, int columnAdd, int rowAdd, bool replace) {
       col += columnAdd;
       row += rowAdd;
@@ -406,6 +409,9 @@ class GameScreenPage extends State<GameScreen> {
           return 1;
         } else {
           int result = replaceStone(col, row, columnAdd, rowAdd, replace);
+          if (gameBoard.array[col][row].situationId == color) {
+            return 0;
+          }
           if (result == 1) {
             setState(() {
               gameBoard.array[col][row].putStone = color;
@@ -432,11 +438,9 @@ class GameScreenPage extends State<GameScreen> {
           gameBoard.array[column][row].putStone = color;
           stoneCounts();
         });
-      }
-      return total > 0;
-    } else {
-      return;
+      } 
     }
+    return total > 0;
   }
 }
 
