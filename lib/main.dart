@@ -321,7 +321,16 @@ class GameScreenPage extends State<GameScreen> {
     );
   }
 
-  Container stoneDecorate(int val) {
+  Container stoneDecorate(int val, bool placable) {
+    BoxDecoration _buildChild(bool placable) {
+      if (placable) {
+        return const BoxDecoration(
+          color: Colors.red,
+        );
+      } else {
+        return const BoxDecoration();
+      }
+    }
     switch (val) {
       case 1:
       return Container( //石
@@ -342,7 +351,9 @@ class GameScreenPage extends State<GameScreen> {
       );
 
       default:
-      return Container();
+      return Container(
+        decoration: _buildChild(placable),
+      );
     }
   }
   int colorToggle = 1;
@@ -371,7 +382,7 @@ class GameScreenPage extends State<GameScreen> {
         width: 40.0,
         height: 40.0,
         color: Colors.green,
-        child: stoneDecorate(val),
+        child: stoneDecorate(val, putStone(column, row, colorToggle, replace: false)),
       ),
     );
   }
@@ -409,13 +420,13 @@ class GameScreenPage extends State<GameScreen> {
           return 1;
         } else {
           int result = replaceStone(col, row, columnAdd, rowAdd, replace);
-          if (gameBoard.array[col][row].situationId == color) {
-            return 0;
-          }
-          if (result == 1) {
-            setState(() {
-              gameBoard.array[col][row].putStone = color;
-            });
+          if (result >= 1) {
+            if (replace) {
+              setState(() {
+                gameBoard.array[col][row].putStone = color;
+              });
+            }
+            return result + 1;
           }
           return result;
         }
@@ -423,16 +434,16 @@ class GameScreenPage extends State<GameScreen> {
     }
 
     int total = 0;
-    total += replaceStone(column, row, 0, 1, replace);
-    total += replaceStone(column, row, 0, -1, replace);
-    total += replaceStone(column, row, -1, 0, replace);
-    total += replaceStone(column, row, 1, 0, replace);
-    total += replaceStone(column, row, 1, 1, replace);
-    total += replaceStone(column, row, -1, -1, replace);
-    total += replaceStone(column, row, -1, 1, replace);
-    total += replaceStone(column, row, 1, -1, replace);
+    total += replaceStone(column, row, 0, 1, replace) > 1 ? 1 : 0;
+    total += replaceStone(column, row, 0, -1, replace) > 1 ? 1 : 0;
+    total += replaceStone(column, row, -1, 0, replace) > 1 ? 1 : 0;
+    total += replaceStone(column, row, 1, 0, replace) > 1 ? 1 : 0;
+    total += replaceStone(column, row, 1, 1, replace) > 1 ? 1 : 0;
+    total += replaceStone(column, row, -1, -1, replace) > 1 ? 1 : 0;
+    total += replaceStone(column, row, -1, 1, replace) > 1 ? 1 : 0;
+    total += replaceStone(column, row, 1, -1, replace) > 1 ? 1 : 0;
 
-    if (!replace) {
+    if (replace) {
       if (total > 0) {
         setState(() {
           gameBoard.array[column][row].putStone = color;
