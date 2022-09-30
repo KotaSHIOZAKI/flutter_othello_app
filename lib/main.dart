@@ -84,11 +84,20 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: const Color.fromARGB(255, 184, 132, 0),
       body: Center(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            const Text(
-              "オセロ",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 64), 
+            BorderedText(
+              strokeWidth: 4.0, //縁の太さ
+              strokeColor: Colors.black,
+              child: const Text(
+                "オセロ",
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.visible,
+                style: TextStyle(
+                  fontSize: 64,
+                  color: Colors.white,
+                ),
+              ),
             ),
             ElevatedButton(
               onPressed: (){
@@ -127,6 +136,7 @@ class Options extends StatefulWidget {
 }
 class OptionsPage extends State<Options> {
   int _boardSize = 1;
+  var sizeSelect = [false, true, false];
 
   @override
   Widget build(BuildContext context) {
@@ -134,24 +144,27 @@ class OptionsPage extends State<Options> {
       backgroundColor: const Color.fromARGB(255, 184, 132, 0),
       body: Center(
         child: Column (
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            RadioListTile(
-              title: const Text('６×６'),
-              value: 0,
-              groupValue: _boardSize,
-              onChanged: (value){_onRadioSelected(value);},
-            ),
-            RadioListTile(
-              title: const Text('８×８'),
-              value: 1,
-              groupValue: _boardSize,
-              onChanged: (value){_onRadioSelected(value);},
-            ),
-            RadioListTile(
-              title: const Text('１０×１０'),
-              value: 2,
-              groupValue: _boardSize,
-              onChanged: (value){_onRadioSelected(value);},
+            ToggleButtons(
+              isSelected: sizeSelect,
+              children: const <Widget>[
+                Text("６×６"),
+                Text("８×８"),
+                Text("１０×１０"),
+              ],
+              onPressed: (int index) {
+                setState(() {
+                  for (int i = 0; i < sizeSelect.length; i++) {
+                    if (i == index) {
+                      sizeSelect[i] = true;
+                      _boardSize = i;
+                    } else {
+                      sizeSelect[i] = false;
+                    }
+                  }
+                });
+              },
             ),
             ElevatedButton(
               onPressed: (){
@@ -181,11 +194,6 @@ class OptionsPage extends State<Options> {
         )
       ),
     );
-  }
-  _onRadioSelected(value) {
-    setState(() {
-      _boardSize = value;
-    });
   }
 }
 
@@ -322,10 +330,11 @@ class GameScreenPage extends State<GameScreen> {
   }
 
   Container stoneDecorate(int val, bool placable) {
-    BoxDecoration _buildChild(bool placable) {
+    BoxDecoration redOutline(bool placable) {
       if (placable) {
-        return const BoxDecoration(
-          color: Colors.red,
+        return BoxDecoration(
+          color: Colors.green,
+          border: Border.all(color: Colors.red, width: 4),
         );
       } else {
         return const BoxDecoration();
@@ -352,7 +361,7 @@ class GameScreenPage extends State<GameScreen> {
 
       default:
       return Container(
-        decoration: _buildChild(placable),
+        decoration: redOutline(placable),
       );
     }
   }
