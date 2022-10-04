@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bordered_text/bordered_text.dart';
 
 import 'main.dart';
+import 'main.dart' as main;
 import 'classes.dart';
 
 class GameScreen extends StatefulWidget {
@@ -163,6 +164,12 @@ class GameScreenPage extends State<GameScreen> {
   int colorToggle = 1;
   GestureDetector board(int column, int row, int val) {
     BoardPiece piece = gameBoard.array[column][row];
+
+    double minSize = MediaQuery.of(context).size.width;
+    if (minSize > MediaQuery.of(context).size.height) {
+      minSize = MediaQuery.of(context).size.height;
+    }
+
     return GestureDetector(
       onTap: () {
         if (piece.canPlace) {
@@ -183,29 +190,14 @@ class GameScreenPage extends State<GameScreen> {
         }
       },
       child: Container(
-        width: 40.0,
-        height: 40.0,
+        width: minSize / main.column,
+        height: minSize / main.row,
         color: Colors.green,
         child: stoneDecorate(val, putStone(column, row, colorToggle, replace: false)),
       ),
     );
   }
 
-  // Future<void> putStone(int column, int row, int color) async {
-  //   await Future.delayed(const Duration(seconds: 1));
-  //   var rowList = [];
-  //   for (int i = row; i < gameBoard.array[column].length; i++) {
-  //     rowList.add(i);
-  //     if (gameBoard.array[column][i].situationId == color) {
-  //       for (int val in rowList) {
-  //         setState(() {
-  //           gameBoard.array[column][val].putStone = color;
-  //         });
-  //       }
-  //       break;
-  //     }
-  //   }
-  // }
   bool putStone(int column, int row, int color, {bool replace = true}) {
     int replaceStone(int col, int row, int columnAdd, int rowAdd, bool replace) {
       col += columnAdd;
