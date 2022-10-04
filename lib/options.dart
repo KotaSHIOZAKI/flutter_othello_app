@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bordered_text/bordered_text.dart';
 
 import 'main.dart';
 import 'game_screen.dart';
@@ -13,6 +14,8 @@ class Options extends StatefulWidget {
 class OptionsPage extends State<Options> {
   int _boardSize = 1;
   var sizeSelect = [false, true, false];
+  int _comLevel = 1;
+  var comSelect = [false, true, false];
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +25,31 @@ class OptionsPage extends State<Options> {
         child: Column (
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            BorderedText(
+              strokeWidth: 4.0, //縁の太さ
+              strokeColor: Colors.black,
+              child: const Text(
+                "ゲーム形式",
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.visible,
+                style: TextStyle(
+                  fontSize: 48,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const Text(
+              "サイズ",
+              style: TextStyle(
+                fontSize: 32,
+              ),
+            ),
             ToggleButtons(
               isSelected: sizeSelect,
               children: const <Widget>[
-                Text("６×６"),
-                Text("８×８"),
-                Text("１０×１０"),
+                Text("６×６", style: TextStyle(fontSize: 20)),
+                Text("８×８", style: TextStyle(fontSize: 20)),
+                Text("１０×１０", style: TextStyle(fontSize: 20)),
               ],
               onPressed: (int index) {
                 setState(() {
@@ -37,6 +59,32 @@ class OptionsPage extends State<Options> {
                       _boardSize = i;
                     } else {
                       sizeSelect[i] = false;
+                    }
+                  }
+                });
+              },
+            ),
+            const Text(
+              "COMの強さ",
+              style: TextStyle(
+                fontSize: 32,
+              ),
+            ),
+            ToggleButtons(
+              isSelected: comSelect,
+              children: const <Widget>[
+                Text("弱い", style: TextStyle(fontSize: 20)),
+                Text("普通", style: TextStyle(fontSize: 20)),
+                Text("強い", style: TextStyle(fontSize: 20)),
+              ],
+              onPressed: (int index) {
+                setState(() {
+                  for (int i = 0; i < comSelect.length; i++) {
+                    if (i == index) {
+                      comSelect[i] = true;
+                      _comLevel = i;
+                    } else {
+                      comSelect[i] = false;
                     }
                   }
                 });
