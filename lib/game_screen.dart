@@ -5,6 +5,8 @@ import 'main.dart';
 import 'main.dart' as main;
 import 'classes.dart';
 
+var counts = [0, 0];
+
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
 
@@ -80,35 +82,7 @@ class GameScreenPage extends State<GameScreen> {
               }
             ],
           ),
-          BorderedText(
-            strokeWidth: 3.0, //縁の太さ
-            strokeColor: Colors.black,
-            child: const Text(
-              "あなたの番です。\n赤枠の場所にタップしてください。",
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.visible,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: (){
-              Navigator.popUntil(context, ModalRoute.withName('/'));
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green, //ボタンの背景色
-            ),
-            child: const Text(
-              "パス",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 25,
-                color: Colors.white,
-              ), 
-            ),
-          ),
+          judge(3),
           const Spacer(),
           ElevatedButton(
             onPressed: (){
@@ -196,6 +170,96 @@ class GameScreenPage extends State<GameScreen> {
         child: stoneDecorate(val, putStone(column, row, colorToggle, replace: false)),
       ),
     );
+  }
+
+  Widget judge(int num) {
+    switch (num) {
+      case 0:
+      //あなたの番
+      return BorderedText(
+        strokeWidth: 3.0, //縁の太さ
+        strokeColor: Colors.black,
+        child: const Text(
+          "あなたの番です。\n赤枠の場所にタップしてください。",
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.visible,
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+      );
+
+      case 1:
+      //置けない場合
+      return ElevatedButton(
+        onPressed: (){
+          Navigator.popUntil(context, ModalRoute.withName('/'));
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green, //ボタンの背景色
+        ),
+        child: const Text(
+          "パス",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 25,
+            color: Colors.white,
+          ), 
+        ),
+      );
+
+      case 2:
+      //相手の番
+      return BorderedText(
+        strokeWidth: 3.0, //縁の太さ
+        strokeColor: Colors.black,
+        child: const Text(
+          "相手の番です。",
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.visible,
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+      );
+
+      case 3:
+      //勝利
+      return BorderedText(
+        strokeWidth: 3.0, //縁の太さ
+        strokeColor: Colors.black,
+        child: const Text(
+          "あなたの勝利！",
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.visible,
+          style: TextStyle(
+            fontSize: 40,
+            color: Colors.white,
+          ),
+        ),
+      );
+
+      case 4:
+      //敗北
+      return BorderedText(
+        strokeWidth: 3.0, //縁の太さ
+        strokeColor: Colors.black,
+        child: const Text(
+          "相手の勝利！",
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.visible,
+          style: TextStyle(
+            fontSize: 40,
+            color: Colors.white,
+          ),
+        ),
+      );
+
+      default:
+      return Container();
+    }
   }
 
   bool putStone(int column, int row, int color, {bool replace = true}) {

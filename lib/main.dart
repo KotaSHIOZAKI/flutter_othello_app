@@ -15,7 +15,6 @@ void main() {
 int column = 6;
 int row = 6;
 GameBoard gameBoard = GameBoard(6, 6);
-var counts = [0, 0];
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
