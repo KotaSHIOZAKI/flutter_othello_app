@@ -5,6 +5,8 @@ import 'main.dart';
 import 'game_screen.dart';
 import 'classes.dart';
 
+int comLevel = 1;
+
 class Options extends StatefulWidget {
   const Options({super.key});
 
@@ -14,7 +16,7 @@ class Options extends StatefulWidget {
 class OptionsPage extends State<Options> {
   int _boardSize = 1;
   var sizeSelect = [false, true, false];
-  int _comLevel = 1;
+
   var comSelect = [false, true, false];
 
   @override
@@ -82,7 +84,7 @@ class OptionsPage extends State<Options> {
                   for (int i = 0; i < comSelect.length; i++) {
                     if (i == index) {
                       comSelect[i] = true;
-                      _comLevel = i;
+                      comLevel = i;
                     } else {
                       comSelect[i] = false;
                     }
@@ -97,6 +99,8 @@ class OptionsPage extends State<Options> {
                 column = (_boardSize * 2) + 6;
                 row = (_boardSize * 2) + 6;
                 judgeNum = 0;
+                colorToggle = 1;
+
                 gameBoard = GameBoard(column, row);
                 stoneCounts();
                 Navigator.pushNamed(context, '/game');
