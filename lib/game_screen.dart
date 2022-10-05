@@ -295,9 +295,7 @@ class GameScreenPage extends State<GameScreen> {
   }
 
   Future<void> cpDecide() async {
-    debugPrint("Start");
     await Future.delayed(const Duration(milliseconds: 1500));
-    debugPrint("End");
     ComputerManager manager = ComputerManager();
 
     setState(() {
