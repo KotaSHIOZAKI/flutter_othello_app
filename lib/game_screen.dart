@@ -87,8 +87,6 @@ class GameScreenPage extends State<GameScreen> {
               }
             ],
           ),
-          Text("黒：$blackPlacableCounts"),
-          Text("白：$whitePlacableCounts"),
           //勝敗判定
           judge(judgeNum),
           const Spacer(),
@@ -165,16 +163,17 @@ class GameScreenPage extends State<GameScreen> {
               //打つ
               piece.putStone = color;
               stoneCounts();
+
+              if (colorToggle == 1) {
+                //白の番
+                colorToggle = 2;
+              } else {
+                //黒の番
+                colorToggle = 1;
+              }
+
               placableCount();
             });
-
-            if (colorToggle == 1) {
-              //白の番
-              colorToggle = 2;
-            } else {
-              //黒の番
-              colorToggle = 1;
-            }
           }
         }
       },
@@ -209,7 +208,16 @@ class GameScreenPage extends State<GameScreen> {
       //打てない場合
       return ElevatedButton(
         onPressed: (){
-          Navigator.popUntil(context, ModalRoute.withName('/'));
+          setState(() {
+            if (colorToggle == 1) {
+              //白の番
+              colorToggle = 2;
+            } else {
+              //黒の番
+              colorToggle = 1;
+            }
+          });
+          placableCount();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green, //ボタンの背景色
@@ -294,6 +302,10 @@ class GameScreenPage extends State<GameScreen> {
   }
 
   bool putStone(int column, int row, int color, {bool replace = true}) {
+    if (!replace && gameBoard.array[column][row].situationId != 0) {
+      return false;
+    }
+
     int replaceStone(int col, int row, int columnAdd, int rowAdd, bool replace) {
       //石をひっくり返す
       col += columnAdd;
@@ -361,18 +373,27 @@ class GameScreenPage extends State<GameScreen> {
       }
     }
 
-    if (blackPlacableCounts <= 0 && whitePlacableCounts <= 0) {
-      if (counts[0] == counts[1]) {
-        //引き分け
-        judgeNum = 5;
+    setState(() {
+      if (blackPlacableCounts <= 0 && whitePlacableCounts <= 0) {
+        if (counts[0] == counts[1]) {
+          //引き分け
+          judgeNum = 5;
+        } else {
+          //勝敗
+          judgeNum = counts[0] > counts[1] ? 3 : 4;
+        }
       } else {
-        //勝敗
-        judgeNum = counts[0] > counts[1] ? 3 : 4;
+        //継続
+        if (
+          colorToggle == 1 && blackPlacableCounts <= 0 || 
+          colorToggle == 2 && whitePlacableCounts <= 0 
+        ) {
+          judgeNum = 1;
+        } else {
+          judgeNum = (colorToggle == 1) ? 0 : 2;
+        }
       }
-    } else {
-      //継続
-      judgeNum = 0;
-    }
+    });
   }
 }
 

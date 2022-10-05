@@ -96,6 +96,7 @@ class OptionsPage extends State<Options> {
                 whitePlacableCounts = 4;
                 column = (_boardSize * 2) + 6;
                 row = (_boardSize * 2) + 6;
+                judgeNum = 0;
                 gameBoard = GameBoard(column, row);
                 stoneCounts();
                 Navigator.pushNamed(context, '/game');
