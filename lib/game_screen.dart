@@ -6,6 +6,9 @@ import 'main.dart' as main;
 import 'classes.dart';
 
 var counts = [0, 0];
+var blackPlacableCounts = 0;
+var whitePlacableCounts = 0;
+var judgeNum = 0;
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -20,6 +23,7 @@ class GameScreenPage extends State<GameScreen> {
       backgroundColor: const Color.fromARGB(255, 184, 132, 0),
       body: Column (
         children: <Widget>[
+          //現在置かれている石の数
           Container(
             padding: const EdgeInsets.only(top: 20.0, bottom: 8.0),
             child: Container(
@@ -69,6 +73,7 @@ class GameScreenPage extends State<GameScreen> {
               ),
             ),
           ),
+          //盤
           Table(
             border: TableBorder.all(),
             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -82,8 +87,12 @@ class GameScreenPage extends State<GameScreen> {
               }
             ],
           ),
-          judge(3),
+          Text("$blackPlacableCounts"),
+          Text("$whitePlacableCounts"),
+          //勝敗判定
+          judge(judgeNum),
           const Spacer(),
+          //「やめる」ボタン
           ElevatedButton(
             onPressed: (){
               Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -102,17 +111,19 @@ class GameScreenPage extends State<GameScreen> {
   Container stoneDecorate(int val, bool placable) {
     BoxDecoration redOutline(bool placable) {
       if (placable) {
+        //打つことが可能な場合
         return BoxDecoration(
           color: Colors.green,
           border: Border.all(color: Colors.red, width: 4),
         );
       } else {
+        //不可能な場合
         return const BoxDecoration();
       }
     }
     switch (val) {
       case 1:
-      return Container( //石
+      return Container( //黒い石
         margin: const EdgeInsets.all(3.0),
         decoration: const BoxDecoration(
           color: Colors.black,
@@ -121,7 +132,7 @@ class GameScreenPage extends State<GameScreen> {
       );
 
       case 2:
-      return Container( //石
+      return Container( //白い石
         margin: const EdgeInsets.all(3.0),
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -151,13 +162,16 @@ class GameScreenPage extends State<GameScreen> {
           bool put = putStone(column, row, color);
           if (put) {
             setState(() {
+              //打つ
               piece.putStone = color;
               stoneCounts();
             });
 
             if (colorToggle == 1) {
+              //白の番
               colorToggle = 2;
             } else {
+              //黒の番
               colorToggle = 1;
             }
           }
@@ -177,7 +191,7 @@ class GameScreenPage extends State<GameScreen> {
       case 0:
       //あなたの番
       return BorderedText(
-        strokeWidth: 3.0, //縁の太さ
+        strokeWidth: 3.0,
         strokeColor: Colors.black,
         child: const Text(
           "あなたの番です。\n赤枠の場所にタップしてください。",
@@ -191,7 +205,7 @@ class GameScreenPage extends State<GameScreen> {
       );
 
       case 1:
-      //置けない場合
+      //打てない場合
       return ElevatedButton(
         onPressed: (){
           Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -257,6 +271,22 @@ class GameScreenPage extends State<GameScreen> {
         ),
       );
 
+      case 5:
+      //引き分け
+      return BorderedText(
+        strokeWidth: 3.0, //縁の太さ
+        strokeColor: Colors.black,
+        child: const Text(
+          "引き分け",
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.visible,
+          style: TextStyle(
+            fontSize: 40,
+            color: Colors.white,
+          ),
+        ),
+      );
+
       default:
       return Container();
     }
@@ -264,6 +294,7 @@ class GameScreenPage extends State<GameScreen> {
 
   bool putStone(int column, int row, int color, {bool replace = true}) {
     int replaceStone(int col, int row, int columnAdd, int rowAdd, bool replace) {
+      //石をひっくり返す
       col += columnAdd;
       row += rowAdd;
       if (
@@ -277,6 +308,7 @@ class GameScreenPage extends State<GameScreen> {
         return 0;
       } else {
         if (gameBoard.array[col][row].situationId == color) {
+          //例：●○○○○●←return 1
           return 1;
         } else {
           int result = replaceStone(col, row, columnAdd, rowAdd, replace);
@@ -307,23 +339,46 @@ class GameScreenPage extends State<GameScreen> {
     if (replace) {
       if (total > 0) {
         setState(() {
+          //石を挟んでひっくり返せた場合
           gameBoard.array[column][row].putStone = color;
           stoneCounts();
         });
-      } 
+      }
+    } else {
+      setState(() {
+        if (blackPlacableCounts <= 0 && whitePlacableCounts <= 0) {
+          if (counts[0] == counts[1]) {
+            //引き分け
+            judgeNum = 5;
+          } else {
+            //勝敗
+            judgeNum = counts[0] > counts[1] ? 3 : 4;
+          }
+        } else {
+          //継続
+          judgeNum = 0;
+        }
+      });
     }
     return total > 0;
+  }
+
+  void placableCount() {
+    blackPlacableCounts = 0;
+    whitePlacableCounts = 0;
   }
 }
 
 void stoneCounts() {
-  counts = [0, 0];
+  counts = [0, 0]; //0番目：黒、1番目：白
 
   for (var row in gameBoard.array) {
     for (var value in row) {
       if (value.situationId == 1) {
+        //黒
         counts[0]++;
       } else if (value.situationId == 2) {
+        //白
         counts[1]++;
       }
     }
