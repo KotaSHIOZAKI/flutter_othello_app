@@ -6,8 +6,8 @@ import 'main.dart' as main;
 import 'classes.dart';
 
 var counts = [0, 0];
-var blackPlacableCounts = 0;
-var whitePlacableCounts = 0;
+var blackPlacableCounts = 4;
+var whitePlacableCounts = 4;
 var judgeNum = 0;
 
 class GameScreen extends StatefulWidget {
@@ -87,8 +87,8 @@ class GameScreenPage extends State<GameScreen> {
               }
             ],
           ),
-          Text("$blackPlacableCounts"),
-          Text("$whitePlacableCounts"),
+          Text("黒：$blackPlacableCounts"),
+          Text("白：$whitePlacableCounts"),
           //勝敗判定
           judge(judgeNum),
           const Spacer(),
@@ -165,6 +165,7 @@ class GameScreenPage extends State<GameScreen> {
               //打つ
               piece.putStone = color;
               stoneCounts();
+              placableCount();
             });
 
             if (colorToggle == 1) {
@@ -315,7 +316,7 @@ class GameScreenPage extends State<GameScreen> {
           if (result >= 1) {
             if (replace) {
               setState(() {
-                Future.delayed(const Duration(milliseconds: 300));
+                // Future.delayed(const Duration(milliseconds: 300));
                 gameBoard.array[col][row].putStone = color;
               });
             }
@@ -342,23 +343,9 @@ class GameScreenPage extends State<GameScreen> {
           //石を挟んでひっくり返せた場合
           gameBoard.array[column][row].putStone = color;
           stoneCounts();
+          placableCount();
         });
       }
-    } else {
-      setState(() {
-        if (blackPlacableCounts <= 0 && whitePlacableCounts <= 0) {
-          if (counts[0] == counts[1]) {
-            //引き分け
-            judgeNum = 5;
-          } else {
-            //勝敗
-            judgeNum = counts[0] > counts[1] ? 3 : 4;
-          }
-        } else {
-          //継続
-          judgeNum = 0;
-        }
-      });
     }
     return total > 0;
   }
@@ -366,6 +353,26 @@ class GameScreenPage extends State<GameScreen> {
   void placableCount() {
     blackPlacableCounts = 0;
     whitePlacableCounts = 0;
+
+    for (int c = 0; c < main.column; c++) {
+      for (int r = 0; r < main.row; r++) {
+        blackPlacableCounts += putStone(c, r, 1, replace: false) ? 1 : 0;
+        whitePlacableCounts += putStone(c, r, 2, replace: false) ? 1 : 0;
+      }
+    }
+
+    if (blackPlacableCounts <= 0 && whitePlacableCounts <= 0) {
+      if (counts[0] == counts[1]) {
+        //引き分け
+        judgeNum = 5;
+      } else {
+        //勝敗
+        judgeNum = counts[0] > counts[1] ? 3 : 4;
+      }
+    } else {
+      //継続
+      judgeNum = 0;
+    }
   }
 }
 

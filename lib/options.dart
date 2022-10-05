@@ -92,6 +92,8 @@ class OptionsPage extends State<Options> {
             ),
             ElevatedButton(
               onPressed: (){
+                blackPlacableCounts = 4;
+                whitePlacableCounts = 4;
                 column = (_boardSize * 2) + 6;
                 row = (_boardSize * 2) + 6;
                 gameBoard = GameBoard(column, row);
