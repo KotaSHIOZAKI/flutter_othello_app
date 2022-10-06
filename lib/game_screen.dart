@@ -324,13 +324,71 @@ class GameScreenPage extends State<GameScreen> {
     }
   }
   Widget endButton(int num) {
-    if (num <= 1 || num >= 4) {
+    if (num >= 4) {
+      return ElevatedButton(
+        onPressed: (){
+          showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                    leading: const Icon(Icons.replay),
+                    title: const Text("もう一度"),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      setState(() {
+                        blackPlacableCounts = 4;
+                        whitePlacableCounts = 4;
+                        judgeNum = 0;
+
+                        gameBoard = GameBoard(column, row);
+                        stoneCounts();
+                        colorToggle = 1;
+
+                        if (yourColor == 1) {
+                          cpDecide();
+                          placableCount();
+                        }
+                      });
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.settings),
+                    title: const Text("オプション"),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.popUntil(context, ModalRoute.withName('/'));
+                      Navigator.pushNamed(context, '/options');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.close),
+                    title: const Text("終わる"),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.popUntil(context, ModalRoute.withName('/'));
+                    },
+                  ),
+                ],
+              );
+            }
+          );
+        },
+        child: const Text(
+          "メニュー",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 25), 
+        ),
+      );
+    } else if (num <= 1) {
        return ElevatedButton(
         onPressed: (){
           Navigator.popUntil(context, ModalRoute.withName('/'));
         },
         child: const Text(
-          "終わる",
+          "やめる",
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 25), 
         ),
