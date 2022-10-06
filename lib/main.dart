@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
         '/options': (context) => const Options(),
         '/color_select': (context) => const ColorSelect(),
         '/game': (context) => const GameScreen(),
-        '/c_page': (context) => const CPage(),
+        '/rules': (context) => const RulesPage(),
       },
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ElevatedButton(
               onPressed: (){
-                Navigator.pushNamed(context, '/c_page');
+                Navigator.pushNamed(context, '/rules');
               },
               child: const Text(
                 "ルール説明",

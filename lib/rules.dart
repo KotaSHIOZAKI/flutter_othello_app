@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bordered_text/bordered_text.dart';
 
-class CPage extends StatelessWidget {
-  const CPage({super.key});
+class RulesPage extends StatelessWidget {
+  const RulesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
