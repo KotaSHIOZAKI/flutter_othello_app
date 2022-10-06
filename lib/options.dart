@@ -99,11 +99,11 @@ class OptionsPage extends State<Options> {
                 column = (_boardSize * 2) + 6;
                 row = (_boardSize * 2) + 6;
                 judgeNum = 0;
-                colorToggle = 1;
 
                 gameBoard = GameBoard(column, row);
                 stoneCounts();
-                Navigator.pushNamed(context, '/game');
+                colorToggle = 1;
+                Navigator.pushNamed(context, '/color_select');
               },
               child: const Text(
                 "始める",

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class ComputerManager {
   void comPut(int c, int r) {
-    int color = 2;
+    int color = colorToggle;
     bool put = putStone(c, r, color) > 0;
     if (put) {
       //打つ
@@ -26,7 +26,7 @@ class ComputerManager {
     for (int c = 0; c < gameBoard.array.length; c++) {
       for (int r = 0; r < gameBoard.array[c].length; r++) {
         if (gameBoard.array[c][r].situationId == 0) {
-          int count = putStone(c, r, 2, replace: false);
+          int count = putStone(c, r, colorToggle, replace: false);
           //最大
           if (count > maxCount) {
             maxList = [[c, r]];

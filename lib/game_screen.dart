@@ -6,6 +6,8 @@ import 'main.dart' as main;
 import 'computer.dart';
 import 'classes.dart';
 
+import 'color_select.dart';
+
 var counts = [0, 0];
 var blackPlacableCounts = 4;
 var whitePlacableCounts = 4;
@@ -19,6 +21,19 @@ class GameScreen extends StatefulWidget {
   GameScreenPage createState() => GameScreenPage();
 }
 class GameScreenPage extends State<GameScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (colorToggle != yourColor + 1) {
+      //COMが黒の場合
+      cpDecide();
+
+      setState(() {
+        placableCount();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,10 +54,10 @@ class GameScreenPage extends State<GameScreen> {
                 },
                 children: <TableRow>[
                   TableRow(children: <Widget>[
-                    const Text(
-                      "あなた",
+                    Text(
+                      yourColor == 0 ? "あなた" : "COM",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24), 
+                      style: const TextStyle(fontSize: 24), 
                     ),
                     const Icon(
                       Icons.circle,
@@ -55,10 +70,10 @@ class GameScreenPage extends State<GameScreen> {
                     ),
                   ]),
                   TableRow(children: <Widget>[
-                    const Text(
-                      "COM",
+                    Text(
+                      yourColor == 0 ? "COM" : "あなた",
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24), 
+                      style: const TextStyle(fontSize: 24), 
                     ),
                     const Icon(
                       Icons.circle,
@@ -156,7 +171,7 @@ class GameScreenPage extends State<GameScreen> {
 
     return GestureDetector(
       onTap: () {
-        if (piece.canPlace && colorToggle == 1) {
+        if (piece.canPlace && colorToggle == yourColor + 1) {
           int color = colorToggle;
           bool put = putStone(column, row, color) > 0;
           if (put) {
@@ -165,8 +180,12 @@ class GameScreenPage extends State<GameScreen> {
               piece.putStone = color;
               stoneCounts();
 
-              //白の番
-              colorToggle = 2;
+              //交代
+              if (colorToggle == 1) {
+                colorToggle = 2;
+              } else {
+                colorToggle = 1;
+              }
               cpDecide();
 
               placableCount();
@@ -206,7 +225,11 @@ class GameScreenPage extends State<GameScreen> {
       return ElevatedButton(
         onPressed: (){
           setState(() {
-            colorToggle = 2;
+            if (colorToggle == 1) {
+              colorToggle = 2;
+            } else {
+              colorToggle = 1;
+            }
             cpDecide();
 
             placableCount();
@@ -301,8 +324,12 @@ class GameScreenPage extends State<GameScreen> {
     setState(() {
       manager.comDecide();
 
-      //黒の番
-      colorToggle = 1;
+      //交代
+      if (colorToggle == 2) {
+        colorToggle = 1;
+      } else {
+        colorToggle = 2;
+      }
       
       placableCount();
     });
@@ -398,7 +425,11 @@ void placableCount() {
       judgeNum = 5;
     } else {
       //勝敗
-      judgeNum = counts[0] > counts[1] ? 3 : 4;
+      if (yourColor == 1) {
+        judgeNum = counts[0] > counts[1] ? 4 : 3;
+      } else {
+        judgeNum = counts[0] > counts[1] ? 3 : 4;
+      }
     }
   } else {
     //継続
@@ -408,7 +439,7 @@ void placableCount() {
     ) {
       judgeNum = 1;
     } else {
-      judgeNum = (colorToggle == 1) ? 0 : 2;
+      judgeNum = (colorToggle == yourColor + 1) ? 0 : 2;
     }
   }
   stoneCounts();

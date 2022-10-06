@@ -4,6 +4,7 @@ import 'package:bordered_text/bordered_text.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'options.dart';
+import 'color_select.dart';
 import 'game_screen.dart';
 import 'rules.dart';
 import 'classes.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const MyHomePage(),
         '/options': (context) => const Options(),
+        '/color_select': (context) => const ColorSelect(),
         '/game': (context) => const GameScreen(),
         '/c_page': (context) => const CPage(),
       },
