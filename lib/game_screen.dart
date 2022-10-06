@@ -108,16 +108,7 @@ class GameScreenPage extends State<GameScreen> {
           judge(judgeNum),
           const Spacer(),
           //「やめる」ボタン
-          ElevatedButton(
-            onPressed: (){
-              Navigator.popUntil(context, ModalRoute.withName('/'));
-            },
-            child: const Text(
-              "やめる",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 25), 
-            ),
-          ),
+          endButton(judgeNum),
         ]
       )
     );
@@ -329,6 +320,22 @@ class GameScreenPage extends State<GameScreen> {
       );
 
       default:
+      return Container();
+    }
+  }
+  Widget endButton(int num) {
+    if (num >= 4) {
+       return ElevatedButton(
+        onPressed: (){
+          Navigator.popUntil(context, ModalRoute.withName('/'));
+        },
+        child: const Text(
+          "終わる",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 25), 
+        ),
+      );
+    } else {
       return Container();
     }
   }
