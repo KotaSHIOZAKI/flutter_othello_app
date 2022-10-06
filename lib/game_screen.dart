@@ -265,6 +265,22 @@ class GameScreenPage extends State<GameScreen> {
       );
 
       case 3:
+      //COMが打てない場合
+      return BorderedText(
+        strokeWidth: 3.0, //縁の太さ
+        strokeColor: Colors.black,
+        child: const Text(
+          "COMはパスをした！",
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.visible,
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+      );
+
+      case 4:
       //勝利
       return BorderedText(
         strokeWidth: 3.0, //縁の太さ
@@ -280,7 +296,7 @@ class GameScreenPage extends State<GameScreen> {
         ),
       );
 
-      case 4:
+      case 5:
       //敗北
       return BorderedText(
         strokeWidth: 3.0, //縁の太さ
@@ -296,7 +312,7 @@ class GameScreenPage extends State<GameScreen> {
         ),
       );
 
-      case 5:
+      case 6:
       //引き分け
       return BorderedText(
         strokeWidth: 3.0, //縁の太さ
@@ -422,13 +438,13 @@ void placableCount() {
   if (blackPlacableCounts <= 0 && whitePlacableCounts <= 0) {
     if (counts[0] == counts[1]) {
       //引き分け
-      judgeNum = 5;
+      judgeNum = 6;
     } else {
       //勝敗
       if (yourColor == 1) {
-        judgeNum = counts[0] > counts[1] ? 4 : 3;
+        judgeNum = counts[0] > counts[1] ? 5 : 4;
       } else {
-        judgeNum = counts[0] > counts[1] ? 3 : 4;
+        judgeNum = counts[0] > counts[1] ? 4 : 5;
       }
     }
   } else {
@@ -437,7 +453,11 @@ void placableCount() {
       colorToggle == 1 && blackPlacableCounts <= 0 || 
       colorToggle == 2 && whitePlacableCounts <= 0 
     ) {
-      judgeNum = 1;
+      if (colorToggle == yourColor + 1) {
+        judgeNum = 1;
+      } else {
+        judgeNum = 3;
+      }
     } else {
       judgeNum = (colorToggle == yourColor + 1) ? 0 : 2;
     }
