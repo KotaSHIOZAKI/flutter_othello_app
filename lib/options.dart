@@ -40,57 +40,75 @@ class OptionsPage extends State<Options> {
                 ),
               ),
             ),
-            const Text(
-              "サイズ",
-              style: TextStyle(
-                fontSize: 32,
+            Container(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: Column (
+                children: <Widget>[
+                  const Text(
+                    "サイズ",
+                    style: TextStyle(
+                      fontSize: 32,
+                    ),
+                  ),
+                  ToggleButtons(
+                    isSelected: sizeSelect,
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int i = 0; i < sizeSelect.length; i++) {
+                          if (i == index) {
+                            sizeSelect[i] = true;
+                            _boardSize = i;
+                          } else {
+                            sizeSelect[i] = false;
+                          }
+                        }
+                      });
+                    },
+                    fillColor: Colors.green,
+                    selectedColor: Colors.white,
+                    children: const <Widget>[
+                      Text(" 　６×６　 ", style: TextStyle(fontSize: 20)),
+                      Text(" 　８×８　 ", style: TextStyle(fontSize: 20)),
+                      Text(" １０×１０ ", style: TextStyle(fontSize: 20)),
+                    ],
+                  ),
+                ]
               ),
             ),
-            ToggleButtons(
-              isSelected: sizeSelect,
-              children: const <Widget>[
-                Text("６×６", style: TextStyle(fontSize: 20)),
-                Text("８×８", style: TextStyle(fontSize: 20)),
-                Text("１０×１０", style: TextStyle(fontSize: 20)),
-              ],
-              onPressed: (int index) {
-                setState(() {
-                  for (int i = 0; i < sizeSelect.length; i++) {
-                    if (i == index) {
-                      sizeSelect[i] = true;
-                      _boardSize = i;
-                    } else {
-                      sizeSelect[i] = false;
-                    }
-                  }
-                });
-              },
-            ),
-            const Text(
-              "COMの強さ",
-              style: TextStyle(
-                fontSize: 32,
+            Container(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: Column (
+                children: <Widget>[
+                  const Text(
+                    "COMの強さ",
+                    style: TextStyle(
+                      fontSize: 32,
+                    ),
+                  ),
+                  ToggleButtons(
+                    isSelected: comSelect,
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int i = 0; i < comSelect.length; i++) {
+                          if (i == index) {
+                            comSelect[i] = true;
+                            comLevel = i;
+                          } else {
+                            comSelect[i] = false;
+                          }
+                        }
+                      });
+                    },
+                    fillColor: Colors.green,
+                    selectedColor: Colors.white,
+                    children: const <Widget>[
+                      Text("　 弱い 　", style: TextStyle(fontSize: 20)),
+                      Text("　 普通 　", style: TextStyle(fontSize: 20)),
+                      Text("　 強い 　", style: TextStyle(fontSize: 20)),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            ToggleButtons(
-              isSelected: comSelect,
-              children: const <Widget>[
-                Text("弱い", style: TextStyle(fontSize: 20)),
-                Text("普通", style: TextStyle(fontSize: 20)),
-                Text("強い", style: TextStyle(fontSize: 20)),
-              ],
-              onPressed: (int index) {
-                setState(() {
-                  for (int i = 0; i < comSelect.length; i++) {
-                    if (i == index) {
-                      comSelect[i] = true;
-                      comLevel = i;
-                    } else {
-                      comSelect[i] = false;
-                    }
-                  }
-                });
-              },
             ),
             ElevatedButton(
               onPressed: (){
@@ -106,17 +124,17 @@ class OptionsPage extends State<Options> {
                 Navigator.pushNamed(context, '/color_select');
               },
               child: const Text(
-                "始める",
+                "決定",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 25), 
               ),
             ),
             ElevatedButton(
               onPressed: (){
-                Navigator.popUntil(context, ModalRoute.withName('/'));
+                Navigator.pop(context);
               },
               child: const Text(
-                "やめる",
+                "キャンセル",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 25), 
               ),

@@ -324,7 +324,7 @@ class GameScreenPage extends State<GameScreen> {
     }
   }
   Widget endButton(int num) {
-    if (num >= 4) {
+    if (num <= 1 || num >= 4) {
        return ElevatedButton(
         onPressed: (){
           Navigator.popUntil(context, ModalRoute.withName('/'));

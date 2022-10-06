@@ -33,30 +33,39 @@ class ColorsPage extends State<ColorSelect> {
                 ),
               ),
             ),
-            const Text(
-              "あなたの色",
-              style: TextStyle(
-                fontSize: 32,
+            Container(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: Column (
+                children: <Widget>[
+                  const Text(
+                    "あなたの色",
+                    style: TextStyle(
+                      fontSize: 32,
+                    ),
+                  ),
+                  ToggleButtons(
+                    isSelected: colorSelect,
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int i = 0; i < colorSelect.length; i++) {
+                          if (i == index) {
+                            colorSelect[i] = true;
+                            yourColor = i;
+                          } else {
+                            colorSelect[i] = false;
+                          }
+                        }
+                      });
+                    },
+                    fillColor: Colors.green,
+                    selectedColor: Colors.white,
+                    children: const <Widget>[
+                      Text("　黒　", style: TextStyle(fontSize: 20)),
+                      Text("　白　", style: TextStyle(fontSize: 20)),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            ToggleButtons(
-              isSelected: colorSelect,
-              children: const <Widget>[
-                Text("黒", style: TextStyle(fontSize: 20)),
-                Text("白", style: TextStyle(fontSize: 20)),
-              ],
-              onPressed: (int index) {
-                setState(() {
-                  for (int i = 0; i < colorSelect.length; i++) {
-                    if (i == index) {
-                      colorSelect[i] = true;
-                      yourColor = i;
-                    } else {
-                      colorSelect[i] = false;
-                    }
-                  }
-                });
-              },
             ),
             ElevatedButton(
               onPressed: (){
@@ -70,10 +79,10 @@ class ColorsPage extends State<ColorSelect> {
             ),
             ElevatedButton(
               onPressed: (){
-                Navigator.popUntil(context, ModalRoute.withName('/'));
+                Navigator.pop(context);
               },
               child: const Text(
-                "やめる",
+                "キャンセル",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 25), 
               ),
