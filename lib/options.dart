@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bordered_text/bordered_text.dart';
 
 import 'main.dart';
+import 'color_select.dart';
 import 'game_screen.dart';
 import 'classes.dart';
 
@@ -117,6 +118,7 @@ class OptionsPage extends State<Options> {
                 column = (_boardSize * 2) + 6;
                 row = (_boardSize * 2) + 6;
                 judgeNum = 0;
+                yourColor = 0;
 
                 gameBoard = GameBoard(column, row);
                 stoneCounts();
