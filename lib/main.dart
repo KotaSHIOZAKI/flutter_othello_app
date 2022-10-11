@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 //import 'dart:math';
 import 'package:bordered_text/bordered_text.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -9,7 +10,15 @@ import 'game_screen.dart';
 import 'rules.dart';
 import 'classes.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); //これ入れないとダメだったと思います。
+  await SystemChrome.setPreferredOrientations([
+    //許可する向きを指定する。
+   DeviceOrientation.portraitUp,//上向きを許可 
+   DeviceOrientation.portraitDown,//下向きを許可
+   DeviceOrientation.landscapeLeft,//左向きを許可
+   DeviceOrientation.landscapeRight,//右向きを許可
+  ]);
   runApp(const MyApp());
 }
 
@@ -36,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/game': (context) => const GameScreen(),
         '/rules': (context) => const RulesPage(),
       },
+      debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

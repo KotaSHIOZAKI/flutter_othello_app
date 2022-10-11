@@ -38,60 +38,159 @@ class GameScreenPage extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 184, 132, 0),
-      body: Column (
-        children: <Widget>[
-          //現在置かれている石の数
-          Container(
-            padding: const EdgeInsets.only(top: 20.0, bottom: 8.0),
-            child: Container(
-              color: Colors.green,
-              margin: const EdgeInsets.all(8.0),
-              child: Table(
-                columnWidths: const {
-                  0: FractionColumnWidth(.3), 
-                  1: FractionColumnWidth(.1), 
-                  2: FractionColumnWidth(.2)
-                },
-                children: <TableRow>[
-                  TableRow(children: <Widget>[
-                    Text(
-                      yourColor == 0 ? "あなた" : "COM",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 24), 
-                    ),
-                    const Icon(
-                      Icons.circle,
-                      size: 32,
-                    ),
-                    Text(
-                      "×${counts[0]}",
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(fontSize: 24), 
-                    ),
-                  ]),
-                  TableRow(children: <Widget>[
-                    Text(
-                      yourColor == 0 ? "COM" : "あなた",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 24), 
-                    ),
-                    const Icon(
-                      Icons.circle,
-                      size: 32,
-                      color: Colors.white,
-                    ),
-                    Text(
-                      "×${counts[1]}",
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(fontSize: 24), 
-                    ),
-                  ]),
-                ],
-              ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+        return constraints.maxWidth < constraints.maxHeight
+          ? vertical()
+          : horizontal();
+        },
+      )
+    );
+  }
+
+  Widget vertical() {
+    return Column (
+      children: <Widget>[
+        //現在置かれている石の数
+        Container(
+          padding: const EdgeInsets.only(top: 20.0, bottom: 8.0),
+          child: Container(
+            color: Colors.green,
+            margin: const EdgeInsets.all(8.0),
+            child: Table(
+              columnWidths: const {
+                0: FractionColumnWidth(.3), 
+                1: FractionColumnWidth(.1), 
+                2: FractionColumnWidth(.2)
+              },
+              children: <TableRow>[
+                TableRow(children: <Widget>[
+                  Text(
+                    yourColor == 0 ? "あなた" : "COM",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 24), 
+                  ),
+                  const Icon(
+                    Icons.circle,
+                    size: 32,
+                  ),
+                  Text(
+                    "×${counts[0]}",
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(fontSize: 24), 
+                  ),
+                ]),
+                TableRow(children: <Widget>[
+                  Text(
+                    yourColor == 0 ? "COM" : "あなた",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 24), 
+                  ),
+                  const Icon(
+                    Icons.circle,
+                    size: 32,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    "×${counts[1]}",
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(fontSize: 24), 
+                  ),
+                ]),
+              ],
             ),
           ),
-          //盤
-          Table(
+        ),
+        //盤
+        Table(
+          border: TableBorder.all(),
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          children: <TableRow>[
+            for (int i = 0; i < column; i++) ... {
+              TableRow(children: <Widget>[
+                for (int j = 0; j < row; j++) ... {
+                  board(i, j, gameBoard.array[i][j].situationId)
+                }
+              ])
+            }
+          ],
+        ),
+        //勝敗判定
+        judge(judgeNum),
+        const Spacer(),
+        //「やめる」ボタン
+        endButton(judgeNum),
+      ]
+    );
+  }
+  Widget horizontal() {
+    return Row (
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            //現在置かれている石の数
+            Container(
+              padding: const EdgeInsets.only(top: 15.0, bottom: 6.0),
+              width: 150,
+              height: 90,
+              child: Container(
+                color: Colors.green,
+                margin: const EdgeInsets.all(6.0),
+                child: Table(
+                  columnWidths: const {
+                    0: FractionColumnWidth(.3), 
+                    1: FractionColumnWidth(.1), 
+                    2: FractionColumnWidth(.2)
+                  },
+                  children: <TableRow>[
+                    TableRow(children: <Widget>[
+                      Text(
+                        yourColor == 0 ? "あなた" : "COM",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 18), 
+                      ),
+                      const Icon(
+                        Icons.circle,
+                        size: 24,
+                      ),
+                      Text(
+                        "×${counts[0]}",
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(fontSize: 18), 
+                      ),
+                    ]),
+                    TableRow(children: <Widget>[
+                      Text(
+                        yourColor == 0 ? "COM" : "あなた",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 18), 
+                      ),
+                      const Icon(
+                        Icons.circle,
+                        size: 24,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        "×${counts[1]}",
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(fontSize: 18), 
+                      ),
+                    ]),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 150,
+              child: judge(judgeNum, sideways: true)
+            ),
+          ],
+        ),
+        //盤
+        SizedBox(
+          width: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height,
+          child: Table(
             border: TableBorder.all(),
             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
             children: <TableRow>[
@@ -104,13 +203,10 @@ class GameScreenPage extends State<GameScreen> {
               }
             ],
           ),
-          //勝敗判定
-          judge(judgeNum),
-          const Spacer(),
-          //「やめる」ボタン
-          endButton(judgeNum),
-        ]
-      )
+        ),
+        //「やめる」ボタン
+        endButton(judgeNum),
+      ]
     );
   }
 
@@ -159,6 +255,7 @@ class GameScreenPage extends State<GameScreen> {
     if (minSize > MediaQuery.of(context).size.height) {
       minSize = MediaQuery.of(context).size.height;
     }
+    debugPrint("${minSize / main.column}");
 
     return GestureDetector(
       onTap: () {
@@ -193,19 +290,22 @@ class GameScreenPage extends State<GameScreen> {
     );
   }
 
-  Widget judge(int num) {
+  Widget judge(int num, {bool sideways = false}) {
+    double sizeRate = sideways ? 0.75 : 1.00;
+    String newLine = sideways ? "\n" : "";
+
     switch (num) {
       case 0:
       //あなたの番
       return BorderedText(
         strokeWidth: 3.0,
         strokeColor: Colors.black,
-        child: const Text(
-          "あなたの番です。\n赤枠の場所にタップしてください。",
+        child: Text(
+          "あなたの番です。\n赤枠の場所に$newLineタップしてください。",
           textAlign: TextAlign.center,
           overflow: TextOverflow.visible,
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 20 * sizeRate,
             color: Colors.white,
           ),
         ),
@@ -229,11 +329,11 @@ class GameScreenPage extends State<GameScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green, //ボタンの背景色
         ),
-        child: const Text(
+        child: Text(
           "パス",
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 25,
+            fontSize: 25 * sizeRate,
             color: Colors.white,
           ), 
         ),
@@ -244,12 +344,12 @@ class GameScreenPage extends State<GameScreen> {
       return BorderedText(
         strokeWidth: 3.0, //縁の太さ
         strokeColor: Colors.black,
-        child: const Text(
+        child: Text(
           "COMの番です。",
           textAlign: TextAlign.center,
           overflow: TextOverflow.visible,
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 20 * sizeRate,
             color: Colors.white,
           ),
         ),
@@ -260,12 +360,12 @@ class GameScreenPage extends State<GameScreen> {
       return BorderedText(
         strokeWidth: 3.0, //縁の太さ
         strokeColor: Colors.black,
-        child: const Text(
+        child: Text(
           "COMはパスをした！",
           textAlign: TextAlign.center,
           overflow: TextOverflow.visible,
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 20 * sizeRate,
             color: Colors.white,
           ),
         ),
@@ -276,12 +376,12 @@ class GameScreenPage extends State<GameScreen> {
       return BorderedText(
         strokeWidth: 3.0, //縁の太さ
         strokeColor: Colors.black,
-        child: const Text(
-          "あなたの勝利！",
+        child: Text(
+          "あなたの$newLine勝利！",
           textAlign: TextAlign.center,
           overflow: TextOverflow.visible,
           style: TextStyle(
-            fontSize: 40,
+            fontSize: 40 * sizeRate,
             color: Colors.white,
           ),
         ),
@@ -292,12 +392,12 @@ class GameScreenPage extends State<GameScreen> {
       return BorderedText(
         strokeWidth: 3.0, //縁の太さ
         strokeColor: Colors.black,
-        child: const Text(
-          "COMの勝利！",
+        child: Text(
+          "COMの$newLine勝利！",
           textAlign: TextAlign.center,
           overflow: TextOverflow.visible,
           style: TextStyle(
-            fontSize: 40,
+            fontSize: 40 * sizeRate,
             color: Colors.white,
           ),
         ),
@@ -308,12 +408,12 @@ class GameScreenPage extends State<GameScreen> {
       return BorderedText(
         strokeWidth: 3.0, //縁の太さ
         strokeColor: Colors.black,
-        child: const Text(
+        child: Text(
           "引き分け",
           textAlign: TextAlign.center,
           overflow: TextOverflow.visible,
           style: TextStyle(
-            fontSize: 40,
+            fontSize: 40 * sizeRate,
             color: Colors.white,
           ),
         ),
@@ -379,7 +479,7 @@ class GameScreenPage extends State<GameScreen> {
         child: const Text(
           "メニュー",
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 25), 
+          style: TextStyle(fontSize: 20), 
         ),
       );
     } else if (num <= 1) {
@@ -390,7 +490,7 @@ class GameScreenPage extends State<GameScreen> {
         child: const Text(
           "やめる",
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 25), 
+          style: TextStyle(fontSize: 20), 
         ),
       );
     } else {

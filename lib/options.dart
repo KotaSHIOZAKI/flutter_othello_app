@@ -41,7 +41,7 @@ class OptionsPage extends State<Options> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.only(bottom: 30),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Column (
                 children: <Widget>[
                   const Text(
@@ -76,7 +76,7 @@ class OptionsPage extends State<Options> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.only(bottom: 30),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Column (
                 children: <Widget>[
                   const Text(
